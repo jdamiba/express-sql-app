@@ -92,7 +92,7 @@ app.route('/login')
         });
     });
 
-// route for user Login
+// route for post creation
 app.route('/create')
 .get(sessionChecker, (req, res) => {
         res.sendFile(__dirname + '/public/create.html');
@@ -114,11 +114,13 @@ app.route('/create')
     });
 });
 
-// route for user Login
+// route to display list of posts
 app.route('/show')
 .get(sessionChecker, (req, res) => {
     if (req.session.user && req.cookies.user_sid) {
-        Post.findAll().then(function (posts) {
+        Post.findAll(
+            { where: { userId: req.session.user.id } }
+        ).then(function (posts) {
             if (!posts) {
                 res.send("No posts")
             } else {

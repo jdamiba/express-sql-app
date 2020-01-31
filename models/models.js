@@ -44,10 +44,10 @@ User.prototype.validPassword = function(password) {
 User.hasMany(Post);
 Post.belongsTo(User);
 
-// create all the defined tables in the specified database.
+// create all the defined tables in the remote SQL database.
 sequelize.sync()
     .then(() => console.log('users table has been successfully created, if one doesn\'t exist'))
     .catch(error => console.log('This error occured', error));
 
-// export User model for use in other files.
+// export User and Post model for use in the controller
 module.exports = {User, Post};
