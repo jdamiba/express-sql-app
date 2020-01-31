@@ -3,8 +3,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var morgan = require('morgan');
-var User = require('./models/user');
-
+const { User, Post } = require('./models/models');
 // invoke an instance of express application.
 var app = express();
 
@@ -41,11 +40,7 @@ app.use((req, res, next) => {
 
 // middleware function to check for logged-in users
 var sessionChecker = (req, res, next) => {
-    if (req.session.user && req.cookies.user_sid) {
-        res.redirect('/dashboard');
-    } else {
-        next();
-    }    
+    next()   
 };
 
 
@@ -96,6 +91,44 @@ app.route('/login')
             }
         });
     });
+
+// route for user Login
+app.route('/create')
+.get(sessionChecker, (req, res) => {
+        res.sendFile(__dirname + '/public/create.html');
+
+})
+.post((req, res) => {
+    Post.create({
+        userId: req.session.user.id,
+        body: req.body.body
+    })
+    .then(
+        console.log("post created")
+    )
+    .then(
+        res.redirect('/show')
+    )
+    .catch(error => {
+        res.redirect('/create');
+    });
+});
+
+// route for user Login
+app.route('/show')
+.get(sessionChecker, (req, res) => {
+    if (req.session.user && req.cookies.user_sid) {
+        Post.findAll().then(function (posts) {
+            if (!posts) {
+                res.send("No posts")
+            } else {
+                res.send(posts)
+            }
+        });
+    } else {
+        res.redirect('/login');
+    }
+});
 
 
 // route for user's dashboard
