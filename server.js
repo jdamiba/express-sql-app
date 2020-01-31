@@ -121,7 +121,6 @@ app.get('/logout', (req, res) => {
     }
 });
 
-
 // route for handling 404 requests(unavailable routes)
 app.use(function (req, res, next) {
   res.status(404).send("Sorry can't find that!")
