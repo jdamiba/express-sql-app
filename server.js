@@ -114,6 +114,33 @@ app.route('/create')
     });
 });
 
+// route for post creation
+app.route('/delete/:id')
+.get(sessionChecker, (req, res) => {
+    Post.findOne({ where: { id: req.params.id } })
+    .then(result => {
+        console.log(result)
+        if (result.userId !== req.session.user.id){
+            res.send("you do not have permission to delete this post")
+        } else {
+            Post.destroy({ where: { id: req.params.id } })
+            .then(
+                console.log("post deleted")
+            )
+            .then(
+                res.redirect('/show')
+            )
+            .catch(error => {
+                console.log("there was an error deleting the post")
+                res.redirect('/show');
+            });
+        }
+    }).catch(error => {
+        console.log("post not found")
+        res.redirect('/show');
+    })
+});
+
 // route to display list of posts
 app.route('/show')
 .get(sessionChecker, (req, res) => {
